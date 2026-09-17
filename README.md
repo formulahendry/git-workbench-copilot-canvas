@@ -4,7 +4,7 @@
 
 **Preview: `0.1.0-preview.1` · Windows-first · MIT**
 
-Install the Canvas directly from its [extension folder](https://github.com/formulahendry/git-workbench-copilot-canvas/tree/main/extensions/git-workbench) in the Copilot App. No manual clone, build step, or GitHub Release is required.
+Install Git Workbench in the Copilot App using the [installation links below](#install). No manual clone, build step, or GitHub Release is required.
 
 ![Standalone Git Workbench browser rendering showing the synthetic aurora-demo repository and a split source diff](assets/demo.png)
 
@@ -34,7 +34,20 @@ The App manages the extension runtime and supplies the Copilot SDK. **App users 
 
 ## Install
 
-### Recommended: install the Canvas extension in the App
+### Recommended: open the install flow in the App
+
+With a compatible Copilot App installed:
+
+1. **[Add Git Workbench marketplace](https://github.com/copilot/app/launch?open=ghapp%3A%2F%2Fplugins%2Fmarketplace%2Fadd%3Fsource%3Dformulahendry%252Fgit-workbench-copilot-canvas)**
+2. **[Install Git Workbench in Copilot App](https://github.com/copilot/app/launch?open=ghapp%3A%2F%2Fplugins%2Finstall%3Fsource%3Dgit-workbench%2540git-workbench-marketplace)**
+
+Confirm the marketplace addition in the App before opening the install link. If you already added `git-workbench-marketplace`, skip step 1.
+
+These links open pre-filled forms in **Customize → Plugins**. They do not add a marketplace or install anything until you confirm in the App. This route installs the **plugin**, which includes the Canvas; it does not install a bare extension folder.
+
+After installation, [open Git Workbench](#open-git-workbench). Choose only one installation route; if you already have a direct extension installed, disable that provider before switching and preserve its `artifacts` directory. If the links do not open your App, use either alternative below.
+
+### Alternative: install the Canvas extension from its folder
 
 Use this **extension folder URL**, not the repository root:
 
@@ -46,7 +59,7 @@ In a Copilot App chat, ask:
 
 That folder contains `extension.mjs` and its companion files. The App's extension installer handles downloading and loading them; no CLI command is needed. After installation, [open Git Workbench](#open-git-workbench) in an App session.
 
-Choose **one** installation route to avoid duplicate providers. The `main` URL follows current source rather than an immutable release. If your App build does not support installing an extension from a GitHub folder URL, use the plugin alternative below.
+The `main` URL follows current source rather than an immutable release. If your App build does not support installing an extension from a GitHub folder URL, use the plugin installation links above or the CLI instructions below.
 
 ### Update or remove a direct extension
 
@@ -55,7 +68,7 @@ Use the App's extension-management controls where available, or ask Copilot to u
 The `copilot plugin update` and `copilot plugin uninstall` commands below apply only to plugin installations, not directly installed extensions.
 
 <details>
-<summary>Alternative: install as a plugin or through a marketplace</summary>
+<summary>CLI alternatives and plugin management</summary>
 
 These routes use the **repository root**, whose `plugin.json` declares `extensions\git-workbench` as a plugin component. Do not pass the Canvas folder URL above to `copilot plugin install`.
 
@@ -209,6 +222,7 @@ No dependency installation is needed for these Node-based checks. Packing is an 
 Further reading:
 
 - [Canvas extensions in the Copilot App](https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions)
+- [Copilot App installation deep links](https://docs.github.com/en/copilot/how-tos/github-copilot-app/open-with-deep-links#open-plugin-flows)
 - [CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference)
 - [Creating a plugin marketplace](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-marketplace)
 - [Finding and installing plugins](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing)
