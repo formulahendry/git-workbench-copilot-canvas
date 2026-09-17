@@ -40,12 +40,12 @@ The user-global catalog, last manual selection, and bounded per-repository UI pr
 $COPILOT_HOME\extensions\git-workbench\artifacts\repositories.json
 ```
 
-`COPILOT_HOME` defaults to `~\.copilot`. The data is separate from the plugin cache and is not deliberately deleted on uninstall. Paths, names, selected remotes, search/filter text, and tree state can reveal private information even though the application does not persist tokens, confirmation IDs, history refs, or drafts.
+`COPILOT_HOME` defaults to `~\.copilot`. The data is separate from the plugin cache, so plugin uninstall does not delete it. For a directly installed user extension, the artifacts directory sits alongside its source; deleting the entire extension directory also removes that data. Preserve artifacts explicitly when replacing or removing direct extension source. Paths, names, selected remotes, search/filter text, and tree state can reveal private information even though the application does not persist tokens, confirmation IDs, history refs, or drafts.
 
 - Do not publish/share this artifact directory, user profile, installed plugin cache, or logs.
 - Do not share a canvas URL: it contains a per-instance access token.
 - Use only reviewed, allowlisted source bundles when distributing the extension; never recursively share a live user extension folder as a gist.
 - Removing a catalog entry clears its saved preferences and any matching last-selection marker, but does not delete the repository. For targeted data clearing, stop all providers and follow the [README](README.md#manually-clear-saved-data).
-- Migrating from an older user extension must keep its artifact directory in place and explicitly remove/disable only the old source provider. An artifacts-only folder without `extension.mjs` does not load a user provider. Do not silently overwrite an installation or move/delete the full folder with its artifacts.
+- When switching installation routes, keep the artifact directory in place and explicitly remove/disable only the old source provider. An artifacts-only folder without `extension.mjs` does not load a user provider. Do not silently overwrite an installation or move/delete the full folder with its artifacts.
 
 Read/output limits and command timeouts constrain resource usage, but do not guarantee responsiveness for every repository or Git configuration.

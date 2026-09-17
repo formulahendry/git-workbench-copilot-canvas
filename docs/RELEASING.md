@@ -1,6 +1,7 @@
 # Packaging and releases
 
-**Normal installation uses Git repository source.** Users do not need a GitHub
+**Normal installation uses the Canvas's GitHub folder URL in the Copilot App.**
+Installing the repository-root plugin is an alternative. Users do not need a GitHub
 Release, a tarball, a build step, or a manual clone. See the [installation
 instructions](../README.md#install). There is no automatic Release workflow.
 
@@ -11,8 +12,9 @@ remain separate, explicitly authorized decisions.
 
 ## Local validation and optional archives
 
-Use Node.js 22+ and Git. No dependency installation or bundled Copilot SDK is
-needed:
+Use Node.js 22+ and Git for these maintainer commands. This Node.js requirement
+does not apply to ordinary App users installing the Canvas. No dependency
+installation or bundled Copilot SDK is needed:
 
 ```powershell
 npm run check

@@ -4,7 +4,7 @@
 
 **Preview: `0.1.0-preview.1` · Windows-first · MIT**
 
-Install directly from this GitHub repository. No manual clone, build step, or GitHub Release is required.
+Install the Canvas directly from its [extension folder](https://github.com/formulahendry/git-workbench-copilot-canvas/tree/main/extensions/git-workbench) in the Copilot App. No manual clone, build step, or GitHub Release is required.
 
 ![Standalone Git Workbench browser rendering showing the synthetic aurora-demo repository and a split source diff](assets/demo.png)
 
@@ -25,30 +25,45 @@ The agent-facing canvas actions are **`catalog`, `context`, and `read` only**. G
 
 ## Requirements
 
-- **GitHub Copilot App preview with Canvas rendering and plugin-contributed extension support enabled.** Availability depends on your build and account. Plugin installation in the terminal-only Copilot CLI does **not** supply the visual renderer.
-- **Node.js 22 or newer**, available to the host, and a modern **Git** on `PATH` with `git switch`, `git restore`, worktree support, and porcelain v2 status.
+- **GitHub Copilot App preview with Canvas extension support.** Availability depends on your build and account. A terminal-only Copilot CLI does **not** supply the visual renderer.
+- A modern **Git** on `PATH` with `git switch`, `git restore`, worktree support, and porcelain v2 status.
 - **Windows first.** Other platforms are not fully supported or validated by this preview.
 - A local Git working tree you trust, plus your own Git identity, credentials, and upstream configuration where needed.
 
-The extension uses Node ES modules and has no third-party runtime dependencies. Copilot resolves `@github/copilot-sdk/extension` from the host automatically: **do not install or bundle the SDK**. The root `package.json` is private development/release tooling, not an npm distribution.
+The App manages the extension runtime and supplies the Copilot SDK. **App users do not need to install Node.js, npm, or the SDK separately for this Canvas.** Node.js 22+ is the project's [development and CI baseline](CONTRIBUTING.md#local-setup), not an additional App-user prerequisite.
 
 ## Install
 
-### From GitHub (one command)
+### Recommended: install the Canvas extension in the App
+
+Use this **extension folder URL**, not the repository root:
+
+https://github.com/formulahendry/git-workbench-copilot-canvas/tree/main/extensions/git-workbench
+
+In a Copilot App chat, ask:
+
+> Install this Canvas extension for my user from https://github.com/formulahendry/git-workbench-copilot-canvas/tree/main/extensions/git-workbench. Ask before replacing an existing installation.
+
+That folder contains `extension.mjs` and its companion files. The App's extension installer handles downloading and loading them; no CLI command is needed. After installation, [open Git Workbench](#open-git-workbench) in an App session.
+
+Choose **one** installation route to avoid duplicate providers. The `main` URL follows current source rather than an immutable release. If your App build does not support installing an extension from a GitHub folder URL, use the plugin alternative below.
+
+### Update or remove a direct extension
+
+Use the App's extension-management controls where available, or ask Copilot to update/remove **only the installed Git Workbench source at the same scope**. Review and approve any replacement. For user-scope installs, preserve `$COPILOT_HOME\extensions\git-workbench\artifacts`; deleting the entire extension folder also deletes its saved data.
+
+The `copilot plugin update` and `copilot plugin uninstall` commands below apply only to plugin installations, not directly installed extensions.
+
+<details>
+<summary>Alternative: install as a plugin or through a marketplace</summary>
+
+These routes use the **repository root**, whose `plugin.json` declares `extensions\git-workbench` as a plugin component. Do not pass the Canvas folder URL above to `copilot plugin install`.
 
 ```powershell
 copilot plugin install formulahendry/git-workbench-copilot-canvas
 ```
 
-Copilot downloads the plugin source for you. Restart or start a new **Copilot App** session, then ask:
-
-> Open Git Workbench for this repository
-
-The CLI and App must use the same Copilot home/profile. A terminal-only CLI can install the plugin but cannot render its canvas.
-
-### Through a marketplace
-
-Direct repository installs work in Copilot CLI 1.0.80-1, but that build marks them deprecated. Use this marketplace route if your CLI warns about or no longer supports direct installs:
+Direct repository plugin installs work in Copilot CLI 1.0.80-1, but that build marks them deprecated. The marketplace alternative is:
 
 ```powershell
 copilot plugin marketplace add formulahendry/git-workbench-copilot-canvas
@@ -57,9 +72,11 @@ copilot plugin install git-workbench@git-workbench-marketplace
 
 In App builds with **Customize → Plugins → Add custom marketplace**, enter `https://github.com/formulahendry/git-workbench-copilot-canvas` and install **git-workbench**. Labels and availability can differ between preview builds.
 
-Both CLI routes install repository source, not a Release archive. The current marketplace follows the default branch and is **not pinned to a release SHA**. Choose one route; do not install duplicate providers. A local checkout is needed only for [development](CONTRIBUTING.md#local-setup).
+The CLI and App must use the same Copilot home/profile. If you install the CLI via npm, follow its separate [Node.js prerequisites](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli); those belong to the CLI installation method, not this Canvas.
 
-### Update or uninstall
+Both routes install repository source, not a Release archive. The current marketplace follows the default branch and is **not pinned to a release SHA**. Restart or start a new App session after installing or updating.
+
+### Update or uninstall a plugin
 
 Update a direct repository installation:
 
@@ -81,6 +98,10 @@ copilot plugin uninstall git-workbench
 ```
 
 If desired, remove its marketplace afterward with `copilot plugin marketplace remove git-workbench-marketplace`. Use the App's plugin controls to disable without uninstalling where supported. Restart the session to stop an already running provider. Repository catalogs and preferences are preserved; see [local data](#local-data-and-privacy).
+
+</details>
+
+A local checkout is needed only for [development](CONTRIBUTING.md#local-setup).
 
 ## Open Git Workbench
 
@@ -128,7 +149,7 @@ There is no hard reset, working-file discard, force push, or automatic conflict 
 
 The renderer is served from a per-panel **`127.0.0.1` loopback** server with Host checking, Origin validation, a per-instance token, and a restrictive Content Security Policy. These are local request protections, **not a sandbox**: extensions execute with your user account's rights. Only open repositories and install extension source you trust. Git may run configured hooks, credential helpers, filters, and network commands. See [Security](SECURITY.md).
 
-User-global data is stored outside the plugin installation/cache:
+Both installation routes use this user-global data location:
 
 ```text
 $COPILOT_HOME\extensions\git-workbench\artifacts\repositories.json
@@ -146,7 +167,7 @@ Only explicitly changed fields are persisted. Catalog locking and atomic writes 
 
 There is **no automatic browser `localStorage` migration**. Previous loopback ports/origins cannot safely be rediscovered, so earlier origin-scoped settings are not imported. Without durable saved preferences, the new settings start from defaults and persist in the catalog as you use them.
 
-Removing a repository from the catalog clears that entry's saved preferences and, if applicable, its last-selection marker. It does **not** delete the repository's directory, worktree, or Git history. Plugin updates/uninstall preserve the separate artifact location. Repository paths, filters, and selected remote names may still be sensitive: do not publish your catalog, logs, token-bearing URLs, or installed state directory.
+Removing a repository from the catalog clears that entry's saved preferences and, if applicable, its last-selection marker. It does **not** delete the repository's directory, worktree, or Git history. Plugin updates/uninstall preserve this location outside the plugin cache. In a direct user-scope installation, the artifacts sit alongside the extension source: preserve them explicitly when replacing or removing that source. Repository paths, filters, and selected remote names may still be sensitive: do not publish your catalog, logs, token-bearing URLs, or installed state directory.
 
 ### Manually clear saved data
 
@@ -168,8 +189,8 @@ Only if every provider is stopped and a stale catalog lock remains, remove the s
 - This is a focused Git workbench, **not a full GitLens replacement** or a complete Git client. No clone/init UI, merge/rebase/cherry-pick workflows, conflict editor, branch/tag deletion, remote editing, worktree creation/removal, hard reset, or force push is provided.
 - Tree categories reflect the selected repository; some can legitimately be empty. A displayed category is not a promise of every possible operation on that category.
 - Reads have size/time bounds. Normal Git command output is capped at 12 MiB, reads normally time out after 25 seconds, and write commands have a 120-second timeout. History is paginated (up to 200 commits per request); file listings are bounded (up to 2,000 entries). Large/binary content and very large repositories can exceed what the preview displays.
-- If the canvas is missing, check your App build's Canvas/plugin support, plugin enablement, discovery location, and duplicate providers. Restart/new session may be required. Installation success is not a visual smoke test.
-- If you previously installed a standalone Git Workbench extension manually, disable that old provider before using the plugin. Keep its `artifacts` directory intact; new users do not need a migration step. See [Security](SECURITY.md#local-data).
+- If the canvas is missing, check your App build's Canvas support, the extension's discovery location or plugin enablement, and duplicate providers. Restart/new session may be required. Installation success is not a visual smoke test.
+- If switching between a direct extension and a plugin installation, disable the old provider first. Keep its `artifacts` directory intact; new users do not need a migration step. See [Security](SECURITY.md#local-data).
 - If a repository is missing/moved, choose its actual local worktree path or remove and re-add the catalog entry. Refresh after changing Git state outside the canvas.
 - For stale confirmations, refresh and prepare again. For write errors/timeouts, inspect state first; **do not automatically retry**.
 - Host integration and platform compatibility must be verified in a compatible App. Source installation does not by itself establish App-rendering compatibility.
@@ -185,8 +206,9 @@ npm run pack
 
 No dependency installation is needed for these Node-based checks. Packing is an optional maintainer task, not an installation requirement. See [Contributing](CONTRIBUTING.md), [Changelog](CHANGELOG.md), [Security](SECURITY.md), and [Packaging and releases](docs/RELEASING.md).
 
-Installation syntax and marketplace behavior follow GitHub's official references:
+Further reading:
 
+- [Canvas extensions in the Copilot App](https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions)
 - [CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference)
 - [Creating a plugin marketplace](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-marketplace)
 - [Finding and installing plugins](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing)

@@ -11,7 +11,7 @@ Git Workbench is a Windows-first preview canvas for the GitHub Copilot App. The 
 
 ## Local setup
 
-Use Node.js **22+**, modern Git, and a compatible Copilot App preview with Canvas and plugin-contributed extension support. This repository uses ES modules and Node's built-in tools. There are no third-party runtime dependencies and no `npm install` step.
+For development, use Node.js **22+**, modern Git, and a compatible Copilot App preview with Canvas support (plus plugin support when exercising that installation route). Node.js 22 is the development/CI baseline declared in the private root `package.json`; App users do not need a separate Node.js installation to use the Canvas. This repository uses ES modules and Node's built-in tools. There are no third-party runtime dependencies and no `npm install` step.
 
 Clone only when developing or inspecting the source:
 

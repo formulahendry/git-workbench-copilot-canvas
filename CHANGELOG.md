@@ -11,7 +11,8 @@ Initial public source preview. This entry does not mark a version tag, GitHub Re
 
 ### Changed
 
-- Prioritize direct GitHub and marketplace installation without a manual clone or Release archive.
+- Prioritize Canvas folder-URL installation in the App, with repository-root plugin and marketplace installation as alternatives.
+- Distinguish the App-managed runtime from the Node.js 22 development/CI requirement.
 - Remove the automatic Release workflow; keep packaging and release-pinning tools optional for maintainers.
 - Replace the standalone migration chapter with a troubleshooting note for existing manual installations.
 
