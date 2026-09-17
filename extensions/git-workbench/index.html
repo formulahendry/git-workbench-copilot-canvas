@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Git Workbench</title>
+  <link rel="stylesheet" href="styles.css">
+  <script id="bootstrap" type="application/json">__BOOTSTRAP__</script>
+  <script src="app.js" type="module"></script>
+</head>
+<body>
+  <a class="skip-link" href="#detail">Skip to content</a>
+  <div id="app" class="app">
+    <header class="topbar">
+      <button id="sidebar-toggle" class="icon-button mobile-toggle" type="button" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">☰</button>
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 7v12a6 6 0 0 0 12 0V7M9 13h5a7 7 0 0 1 7 7" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="3"/><circle cx="21" cy="7" r="3"/><circle cx="21" cy="24" r="3"/></svg>
+        <div><strong>Git Workbench</strong><span class="brand-caption">Every change, clearly visible</span></div>
+      </div>
+      <span id="head-badge" class="pill branch-badge">No repository selected</span>
+      <div class="toolbar network-toolbar" aria-label="Repository actions">
+        <button id="refresh" type="button" title="Refresh repository status">↻ <span>Refresh</span></button>
+        <label class="sr-only" for="remote-select">Remote to fetch</label>
+        <select id="remote-select" aria-label="Remote to fetch" disabled></select>
+        <button id="fetch" type="button" disabled>↓ Fetch</button>
+        <button id="pull" type="button" title="Fast-forward only" disabled>↓ Pull</button>
+        <button id="push" type="button" title="Push to the existing upstream only; never force push" disabled>↑ Push</button>
+      </div>
+    </header>
+
+    <div id="error-banner" class="error-banner" role="alert" hidden>
+      <div><strong id="error-title">Operation failed</strong><pre id="error-message"></pre></div>
+      <div class="toolbar"><button id="error-retry" type="button">Retry</button><button id="error-dismiss" type="button" aria-label="Dismiss error">Dismiss</button></div>
+    </div>
+    <div id="notice" class="notice" role="status" hidden></div>
+
+    <div class="workspace">
+      <aside id="sidebar" class="sidebar" aria-label="Repository navigation">
+        <section class="repository-switcher" aria-label="Repository settings">
+          <div class="eyebrow">WORKSPACE <span class="local-dot">Local repositories</span></div>
+          <label class="sr-only" for="repo-select">Current repository</label>
+          <div class="toolbar">
+            <select id="repo-select"><option value="">Loading repositories...</option></select>
+            <button id="add-repo" class="icon-button" type="button" aria-label="Add repository" title="Add a repository by its absolute path">＋</button>
+            <button id="remove-repo" class="icon-button" type="button" aria-label="Remove repository from the list without deleting files" title="Remove from the list only; files on disk are preserved" disabled>−</button>
+          </div>
+          <p id="repo-path" class="repo-path" title="">Repository list saved by the local service</p>
+          <div id="sync-summary" class="sync-summary">Select a repository to begin</div>
+        </section>
+
+        <nav class="tabs" aria-label="Browse views">
+          <button id="tab-changes" type="button" class="tab active" aria-pressed="true">Changes <span id="changes-count" class="count">0</span></button>
+          <button id="tab-history" type="button" class="tab" aria-pressed="false">History</button>
+          <button id="tab-files" type="button" class="tab" aria-pressed="false">Files</button>
+        </nav>
+
+        <div class="sidebar-scroll">
+          <section id="changes-panel" aria-label="Source control">
+            <form id="commit-form" class="commit-form">
+              <label for="commit-message">Commit message</label>
+              <textarea id="commit-message" rows="3" placeholder="Summarize your changes...&#10;&#10;Add a description if needed" disabled></textarea>
+              <div class="commit-hint">Commits all staged changes only.</div>
+              <button id="commit-button" class="primary full-width" type="submit" disabled>Review commit</button>
+            </form>
+            <div class="path-filter">
+              <label class="sr-only" for="change-filter">Filter changed paths</label>
+              <input id="change-filter" type="search" placeholder="Filter changed paths..." autocomplete="off" maxlength="512">
+            </div>
+            <div id="change-trees"></div>
+            <div class="sidebar-actions">
+              <button id="stash-create" type="button" disabled>＋ Create stash</button>
+              <button id="compare-open" type="button" disabled>⇄ Compare refs</button>
+            </div>
+          </section>
+
+          <section id="history-panel" class="side-panel" aria-label="Browse history" hidden>
+            <h2>Commit timeline</h2>
+            <p class="muted">Explore history by branch, commit message, or file path. Clicking a ref only browses it; it never changes your checkout.</p>
+            <button id="history-head" type="button" class="full-width">Browse current HEAD</button>
+            <button id="history-all" type="button" class="full-width">Browse all branches</button>
+            <p class="hint">Graph edges show actual parent relationships. Hollow nodes mark parents that have not been loaded.</p>
+          </section>
+
+          <section id="files-panel" class="side-panel" aria-label="Tracked files" hidden>
+            <label for="file-search">Tracked files</label>
+            <input id="file-search" type="search" placeholder="Search paths..." autocomplete="off" maxlength="512">
+            <p class="hint">Click a file to view blame at HEAD, or browse its history.</p>
+            <div id="files-tree"></div>
+            <p id="files-note" class="hint"></p>
+          </section>
+
+          <div class="section-divider"><span>Refs &amp; workspaces</span><button id="branch-create" type="button" class="text-button" disabled>＋ New branch</button></div>
+          <div id="reference-trees"></div>
+        </div>
+        <label class="auto-refresh"><input id="auto-refresh" type="checkbox"> Refresh every 15s when visible and idle</label>
+      </aside>
+
+      <main id="detail" class="detail" tabindex="-1" aria-label="Git details">
+        <div class="welcome">
+          <span class="eyebrow">YOUR CODE. YOUR HISTORY.</span>
+          <h1>See the story behind every change.</h1>
+          <p>Add a local Git repository to explore its working tree, commits, and branches.</p>
+          <button id="welcome-add" type="button" class="primary">＋ Add repository</button>
+          <p class="hint">Every Git write operation previews its commands and waits for your explicit confirmation.</p>
+        </div>
+      </main>
+    </div>
+
+    <footer class="statusbar">
+      <span class="status-local"><span class="status-dot"></span> Local service · No telemetry</span>
+      <span id="status-text" role="status" aria-live="polite">Connecting...</span>
+      <span id="status-repo" class="status-repo"></span>
+    </footer>
+  </div>
+
+  <dialog id="modal" aria-labelledby="modal-title" aria-describedby="modal-description">
+    <form id="modal-form" class="modal-form">
+      <div class="modal-heading"><span id="modal-eyebrow" class="eyebrow">GIT WORKBENCH</span><h2 id="modal-title"></h2></div>
+      <p id="modal-description" class="muted"></p>
+      <div id="modal-body"></div>
+      <p id="modal-error" class="modal-error" role="alert" hidden></p>
+      <div class="modal-footer"><button id="modal-cancel" type="button">Cancel</button><button id="modal-submit" type="submit" class="primary">Continue</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

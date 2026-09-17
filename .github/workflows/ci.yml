@@ -1,0 +1,52 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: Windows validation
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run check
+      - run: npm test
+      - run: npm run validate
+      - run: npm run pack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-distributions
+          path: |
+            dist/git-workbench-plugin-*.tar.gz
+            dist/git-workbench-canvas-*.tar.gz
+            dist/integrity.json
+            dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+
+  linux-packaging-smoke:
+    name: Linux packaging smoke (not a support claim)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run test:packaging
+      - run: npm run validate
+      - run: npm run pack

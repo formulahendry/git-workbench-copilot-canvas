@@ -1,0 +1,24 @@
+{
+  "name": "git-workbench-marketplace",
+  "owner": {
+    "name": "formulahendry"
+  },
+  "metadata": {
+    "description": "Git Workbench for GitHub Copilot. Local development catalog; no published release is implied.",
+    "version": "0.1.0-preview.1"
+  },
+  "plugins": [
+    {
+      "name": "git-workbench",
+      "description": "A visual Git canvas for GitHub Copilot.",
+      "version": "0.1.0-preview.1",
+      "source": "./",
+      "author": {
+        "name": "formulahendry"
+      },
+      "homepage": "https://github.com/formulahendry/git-workbench-copilot-canvas",
+      "repository": "https://github.com/formulahendry/git-workbench-copilot-canvas",
+      "license": "MIT"
+    }
+  ]
+}

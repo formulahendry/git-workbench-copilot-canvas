@@ -1,0 +1,25 @@
+{
+  "name": "git-workbench",
+  "version": "0.1.0-preview.1",
+  "private": true,
+  "type": "module",
+  "description": "Development and release tooling for the Git Workbench Copilot canvas.",
+  "license": "MIT",
+  "author": "formulahendry",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/formulahendry/git-workbench-copilot-canvas"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test extensions/git-workbench/git.test.mjs extensions/git-workbench/preferences.test.mjs tests/*.test.mjs",
+    "test:packaging": "node --test tests/packaging.test.mjs",
+    "check": "node scripts/check.mjs",
+    "validate": "node scripts/validate.mjs",
+    "pack": "node scripts/pack.mjs",
+    "marketplace:pin": "node scripts/pin-marketplace.mjs",
+    "release:verify": "node scripts/verify-release.mjs"
+  }
+}

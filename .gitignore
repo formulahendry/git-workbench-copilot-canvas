@@ -1,0 +1,16 @@
+/dist/
+/.tmp/
+/.packaging-fixtures/
+/node_modules/
+**/node_modules/
+**/artifacts/
+**/repositories.json
+**/repositories.json.lock
+**/preferences.json
+**/preferences.json.lock
+*.log
+.DS_Store
+Thumbs.db
+/.env
+/.env.*
+!/.env.example

@@ -1,0 +1,13 @@
+{
+  "name": "git-workbench",
+  "description": "Git Workbench is a visual Git canvas for GitHub Copilot, with repository browsing and user-confirmed Git operations.",
+  "version": "0.1.0-preview.1",
+  "author": {
+    "name": "formulahendry"
+  },
+  "homepage": "https://github.com/formulahendry/git-workbench-copilot-canvas",
+  "repository": "https://github.com/formulahendry/git-workbench-copilot-canvas",
+  "license": "MIT",
+  "keywords": ["git", "copilot", "canvas", "git-workbench"],
+  "extensions": "extensions"
+}

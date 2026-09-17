@@ -1,0 +1,139 @@
+name: Prepare draft release
+
+on:
+  push:
+    tags: ["v[0-9]*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag, for example v0.1.0-preview.1
+        required: true
+        type: string
+      confirmation:
+        description: Explicitly authorize creating a draft GitHub release
+        required: true
+        default: "no"
+        type: choice
+        options: ["no", "create-draft"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: >-
+      github.repository == 'formulahendry/git-workbench-copilot-canvas' &&
+      (github.event_name == 'push' || github.event.inputs.confirmation == 'create-draft')
+    runs-on: windows-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
+      tag: ${{ steps.identity.outputs.tag }}
+      sha: ${{ steps.identity.outputs.sha }}
+      prerelease: ${{ steps.identity.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify version, tag, and checkout identity
+        id: identity
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          $arguments = @("scripts/verify-release.mjs", "--tag", $env:RELEASE_TAG)
+          if ($env:GITHUB_EVENT_NAME -eq "push") {
+            $arguments += @("--expected-sha", $env:GITHUB_SHA)
+          }
+          $json = & node @arguments
+          if ($LASTEXITCODE -ne 0) { throw "Release identity verification failed" }
+          $identity = $json | ConvertFrom-Json
+          "version=$($identity.version)" >> $env:GITHUB_OUTPUT
+          "tag=$($identity.tag)" >> $env:GITHUB_OUTPUT
+          "sha=$($identity.sha)" >> $env:GITHUB_OUTPUT
+          "prerelease=$($identity.prerelease.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+      - run: npm run check
+      - run: npm test
+      - run: npm run validate
+      - name: Recheck the source after tests
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ steps.identity.outputs.tag }}
+          RELEASE_SHA: ${{ steps.identity.outputs.sha }}
+        run: |
+          & node scripts/verify-release.mjs --tag $env:RELEASE_TAG --expected-sha $env:RELEASE_SHA
+          if ($LASTEXITCODE -ne 0) { throw "Release source changed during validation" }
+      - run: npm run pack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-release
+          path: |
+            dist/git-workbench-plugin-*.tar.gz
+            dist/git-workbench-canvas-*.tar.gz
+            dist/integrity.json
+            dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Create draft only
+    needs: verify
+    runs-on: windows-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: verified-release
+          path: dist
+      - name: Verify artifacts and create draft
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.verify.outputs.version }}
+          RELEASE_TAG: ${{ needs.verify.outputs.tag }}
+          RELEASE_SHA: ${{ needs.verify.outputs.sha }}
+          RELEASE_PRERELEASE: ${{ needs.verify.outputs.prerelease }}
+        run: |
+          $expected = @(
+            "git-workbench-plugin-$env:RELEASE_VERSION.tar.gz",
+            "git-workbench-canvas-$env:RELEASE_VERSION.tar.gz",
+            "integrity.json"
+          )
+          $checksums = Get-Content -LiteralPath "dist\SHA256SUMS"
+          if ($checksums.Count -ne $expected.Count) { throw "Unexpected checksum manifest" }
+          $seen = @()
+          foreach ($line in $checksums) {
+            if ($line -notmatch '^([a-f0-9]{64})  ([A-Za-z0-9+_.-]+)$') { throw "Invalid checksum entry" }
+            $hash = $Matches[1]
+            $file = $Matches[2]
+            if ($file -notin $expected -or $file -in $seen) { throw "Unexpected or duplicate artifact" }
+            $seen += $file
+            $actual = (Get-FileHash -LiteralPath (Join-Path "dist" $file) -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($actual -ne $hash) { throw "Artifact checksum mismatch" }
+          }
+          $tag = [Uri]::EscapeDataString($env:RELEASE_TAG)
+          $actualSha = & gh api "repos/$env:GITHUB_REPOSITORY/commits/$tag" --jq ".sha"
+          if ($LASTEXITCODE -ne 0 -or $actualSha -ne $env:RELEASE_SHA) { throw "Remote tag moved after verification" }
+          $files = @($expected | ForEach-Object { Join-Path "dist" $_ }) + @("dist\SHA256SUMS")
+          $arguments = @(
+            "release", "create", $env:RELEASE_TAG,
+            "--repo", $env:GITHUB_REPOSITORY,
+            "--target", $env:RELEASE_SHA,
+            "--verify-tag", "--draft",
+            "--title", "Git Workbench $env:RELEASE_VERSION",
+            "--notes", "Draft for maintainer review. See CHANGELOG.md and docs/RELEASING.md at this tag. Review both archives and SHA256SUMS before publishing."
+          )
+          if ($env:RELEASE_PRERELEASE -eq "true") { $arguments += "--prerelease" }
+          & gh @arguments @files
+          if ($LASTEXITCODE -ne 0) { throw "Draft release creation failed" }

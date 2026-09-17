@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title description">
+  <title id="title">Git Workbench — synthetic preview illustration</title>
+  <desc id="description">Original illustration, not a screenshot. A dark Git Workbench panel shows an imaginary aurora-demo repository on main, staged and working changes, branch and history trees, and a small unified source diff. All repository and code data is synthetic.</desc>
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#132339"/>
+      <stop offset="1" stop-color="#172830"/>
+    </linearGradient>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; }
+      .heading { fill: #f0f5fb; font-weight: 600; }
+      .label { fill: #cad5e2; font-size: 14px; }
+      .muted { fill: #95a9be; font-size: 13px; }
+      .code { fill: #d6e1ef; font-family: Consolas, monospace; font-size: 15px; }
+      .line { fill: #8194aa; font-family: Consolas, monospace; font-size: 13px; }
+      .stroke { fill: none; stroke: #34485f; stroke-width: 1; }
+    </style>
+  </defs>
+  <rect width="1200" height="700" fill="url(#backdrop)"/>
+  <text x="52" y="58" class="heading" font-size="27">Git Workbench</text>
+  <text x="52" y="85" class="muted" font-size="15">Your repository, alongside the conversation.</text>
+  <rect x="990" y="38" width="158" height="30" rx="15" fill="#253b4c" stroke="#476075"/>
+  <text x="1069" y="58" text-anchor="middle" fill="#c5dfed" font-size="12" font-weight="600">PREVIEW · ILLUSTRATION</text>
+  <rect x="52" y="112" width="1096" height="514" rx="12" fill="#101923" stroke="#3b4c61"/>
+  <path d="M64 112H1136Q1148 112 1148 124V165H52V124Q52 112 64 112Z" fill="#1a2533"/>
+  <line x1="52" y1="165" x2="1148" y2="165" stroke="#344356"/>
+  <circle cx="77" cy="138" r="5" fill="#72d5b3"/>
+  <text x="94" y="143" class="heading" font-size="16">aurora-demo</text>
+  <rect x="225" y="125" width="65" height="27" rx="6" fill="#2b3b50"/>
+  <text x="257" y="143" text-anchor="middle" class="label" font-size="12">main</text>
+  <text x="1098" y="143" text-anchor="end" class="muted">3 changes · HEAD</text>
+  <rect x="53" y="166" width="295" height="448" fill="#141f2b"/>
+  <line x1="348" y1="166" x2="348" y2="626" stroke="#344356"/>
+  <text x="75" y="193" class="muted" font-size="11" letter-spacing="1.5">REPOSITORIES</text>
+  <path d="M75 213l5 5 5-5" fill="none" stroke="#97b0c9" stroke-width="1.5"/>
+  <text x="95" y="221" class="heading" font-size="14">aurora-demo</text>
+  <path d="M91 246l5 5 5-5" fill="none" stroke="#97b0c9" stroke-width="1.5"/>
+  <text x="111" y="254" class="label">Staged changes</text>
+  <text x="322" y="254" text-anchor="end" fill="#85dabc" font-size="12">1</text>
+  <text x="127" y="283" class="label">theme.js</text>
+  <text x="322" y="283" text-anchor="end" fill="#85dabc" font-size="12">M</text>
+  <path d="M91 309l5 5 5-5" fill="none" stroke="#97b0c9" stroke-width="1.5"/>
+  <text x="111" y="317" class="label">Working changes</text>
+  <text x="322" y="317" text-anchor="end" class="muted">2</text>
+  <rect x="65" y="327" width="270" height="29" rx="5" fill="#284265"/>
+  <text x="127" y="347" fill="#e8f2ff" font-size="14">greeting.js</text>
+  <text x="322" y="347" text-anchor="end" fill="#91bffd" font-size="12">M</text>
+  <text x="127" y="377" class="label">notes.md</text>
+  <text x="322" y="377" text-anchor="end" class="muted">U</text>
+  <line x1="75" y1="398" x2="325" y2="398" stroke="#2b3b4e"/>
+  <path d="M92 421l5 5-5 5M92 453l5 5-5 5M92 485l5 5-5 5M92 517l5 5-5 5M92 549l5 5-5 5" fill="none" stroke="#97b0c9" stroke-width="1.5"/>
+  <text x="111" y="431" class="label">Branches</text>
+  <text x="111" y="463" class="label">Tags</text>
+  <text x="111" y="495" class="label">Remotes</text>
+  <text x="111" y="527" class="label">Stashes</text>
+  <text x="111" y="559" class="label">Worktrees</text>
+  <text x="380" y="194" class="heading" font-size="14">Changes</text>
+  <text x="477" y="194" class="muted">History</text>
+  <text x="562" y="194" class="muted">Files</text>
+  <line x1="379" y1="208" x2="439" y2="208" stroke="#8dbeff" stroke-width="2"/>
+  <line x1="349" y1="209" x2="1147" y2="209" stroke="#2b3b4e"/>
+  <text x="380" y="242" class="heading" font-size="15">greeting.js</text>
+  <text x="493" y="242" class="muted">Working tree</text>
+  <rect x="926" y="221" width="195" height="30" rx="6" fill="#192738" stroke="#35485d"/>
+  <rect x="929" y="224" width="75" height="24" rx="4" fill="#324966"/>
+  <text x="966" y="241" text-anchor="middle" fill="#e8f2ff" font-size="12">Unified</text>
+  <text x="1033" y="241" text-anchor="middle" class="muted">Split</text>
+  <text x="1090" y="241" text-anchor="middle" class="muted">Raw</text>
+  <rect x="370" y="269" width="755" height="33" rx="4" fill="#202e43"/>
+  <text x="391" y="290" fill="#acc8ed" font-family="Consolas, monospace" font-size="13">@@ -1,4 +1,6 @@</text>
+  <text x="393" y="330" class="line">1</text>
+  <text x="433" y="330" class="code">export function greeting(name) {</text>
+  <rect x="370" y="343" width="755" height="31" fill="#472b37"/>
+  <text x="393" y="364" class="line">2</text>
+  <text x="433" y="364" fill="#ffbdc7" font-family="Consolas, monospace" font-size="15">−  return `Hello, ${name}`;</text>
+  <rect x="370" y="375" width="755" height="92" fill="#153b33"/>
+  <text x="393" y="397" class="line">2</text>
+  <text x="433" y="397" fill="#a3e8c6" font-family="Consolas, monospace" font-size="15">+  const visitor = name.trim() || "traveler";</text>
+  <text x="393" y="427" class="line">3</text>
+  <text x="433" y="427" fill="#a3e8c6" font-family="Consolas, monospace" font-size="15">+</text>
+  <text x="393" y="457" class="line">4</text>
+  <text x="433" y="457" fill="#a3e8c6" font-family="Consolas, monospace" font-size="15">+  return `Welcome, ${visitor}.`;</text>
+  <text x="393" y="491" class="line">5</text>
+  <text x="433" y="491" class="code">}</text>
+  <rect x="370" y="535" width="755" height="57" rx="7" fill="#1a2838" stroke="#334b60"/>
+  <circle cx="393" cy="563" r="5" fill="#85dabc"/>
+  <text x="409" y="560" class="heading" font-size="13">Review first. Confirm explicitly.</text>
+  <text x="409" y="581" class="muted">Git writes require a fresh, one-shot confirmation.</text>
+  <text x="600" y="666" text-anchor="middle" fill="#b8cddd" font-size="14">Illustration — synthetic demo data, not a screenshot</text>
+</svg>
