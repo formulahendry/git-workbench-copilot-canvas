@@ -391,15 +391,3 @@ test("release verification requires aligned tag, clean checkout, and actual trig
     readGit: (args) => args[0] === "status" ? "?? uncommitted-file" : readGit(args),
   }), /clean, committed checkout/);
 });
-
-test("release workflow separates verification from draft-only publishing with minimal permissions", async () => {
-  const workflow = await readFile(path.join(projectRoot, ".github", "workflows", "release.yml"), "utf8");
-  assert.match(workflow, /permissions:\s+contents: read/);
-  assert.match(workflow, /publish:[\s\S]*needs: verify/);
-  assert.match(workflow, /publish:[\s\S]*permissions:\s+contents: write/);
-  assert.match(workflow, /"--verify-tag", "--draft"/);
-  assert.match(workflow, /Remote tag moved after verification/);
-  assert.match(workflow, /--expected-sha/);
-  assert.match(workflow, /confirmation == 'create-draft'/);
-  assert.doesNotMatch(workflow, /pull_request_target|npm publish|git push/);
-});

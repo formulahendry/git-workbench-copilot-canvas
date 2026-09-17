@@ -13,6 +13,17 @@ Git Workbench is a Windows-first preview canvas for the GitHub Copilot App. The 
 
 Use Node.js **22+**, modern Git, and a compatible Copilot App preview with Canvas and plugin-contributed extension support. This repository uses ES modules and Node's built-in tools. There are no third-party runtime dependencies and no `npm install` step.
 
+Clone only when developing or inspecting the source:
+
+```powershell
+git clone https://github.com/formulahendry/git-workbench-copilot-canvas.git
+Set-Location git-workbench-copilot-canvas
+$checkout = (Get-Location).Path
+copilot --plugin-dir $checkout plugin list
+```
+
+For an intentional local App installation, register `$checkout` with `copilot plugin marketplace add $checkout`, then install `git-workbench@git-workbench-marketplace`. Use a separate Copilot home when testing so an existing installation is not replaced. Local directory marketplace sources load live from the checkout on restart/new session; keep the checkout in place. Ordinary users can [install directly from GitHub](README.md#install) without cloning.
+
 The extension entry point is `extensions\git-workbench\extension.mjs`. The host automatically resolves `@github/copilot-sdk/extension`; never add or bundle that SDK. Do not change the stable `git-workbench` plugin/canvas/folder identity without an explicit migration design.
 
 Read the SDK's bundled extension/canvas documentation for your installed host before changing runtime wiring. Preserve the legacy root `plugin.json` with `"extensions": "extensions"`; an Agent Plugins 1.0 schema changes that field's semantics.
@@ -51,7 +62,7 @@ An optional second argument specifies a screenshot output path. Keep any screens
 
 ### App host smoke test
 
-For an intentional App smoke test, use the [local installation instructions](README.md#install-from-a-local-checkout), install only one provider, and use a disposable repository. Check:
+For an intentional App smoke test, use the [installation instructions](README.md#install), install only one provider, and use a disposable repository. Check:
 
 1. Open from a session worktree and with an explicit repository path; neither should switch branches.
 2. Browse SCM trees, diff modes, history, blame, and refs.

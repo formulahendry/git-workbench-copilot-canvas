@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, realpath, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import vm from "node:vm";
@@ -11,7 +11,7 @@ import { startServer } from "./server.mjs";
 import { initialContext } from "./context.mjs";
 
 async function fixture(t) {
-    const root = await mkdtemp(path.join(tmpdir(), "git-workbench-preferences-"));
+    const root = await realpath(await mkdtemp(path.join(tmpdir(), "git-workbench-preferences-")));
     t.after(() => rm(root, { recursive: true, force: true }));
     const repos = [path.join(root, "demo-one"), path.join(root, "demo-two")];
     for (const repo of repos) {

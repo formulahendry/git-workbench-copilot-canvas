@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, readFile, rename, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, realpath, rename, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { GitService, parseStatus, runGit } from "./git.mjs";
@@ -35,7 +35,7 @@ test("UI assets use English labels, accessibility text and display formats", asy
 });
 
 async function fixture(t, populated = true) {
-    const root = await mkdtemp(path.join(tmpdir(), "git-workbench-test-"));
+    const root = await realpath(await mkdtemp(path.join(tmpdir(), "git-workbench-test-")));
     t.after(() => rm(root, { recursive: true, force: true }));
     const repo = path.join(root, "repo with spaces");
     await mkdir(repo);
@@ -137,6 +137,22 @@ test("empty repository, literal option-like filenames and binary preview", async
     assert.equal(await readFile(path.join(repo, "--odd name.txt"), "utf8"), "literal file\n");
     await writeFile(path.join(repo, "binary.bin"), Buffer.from([1, 0, 2]));
     assert.equal((await service.diff(repo, { path: "binary.bin", side: "working" })).binary, true);
+});
+
+test("file containment canonicalizes repository aliases without allowing outside directory links", async (t) => {
+    const { repo, root } = await fixture(t, false);
+    const alias = path.join(root, "repository-alias");
+    const outside = `${repo}-outside`;
+    await mkdir(outside);
+    await writeFile(path.join(repo, "demo.txt"), "inside the repository\n");
+    await writeFile(path.join(outside, "demo.txt"), "outside the repository\n");
+    const linkType = process.platform === "win32" ? "junction" : "dir";
+    await symlink(repo, alias, linkType);
+    await symlink(outside, path.join(repo, "outside-link"), linkType);
+    assert.equal(await service.safeFile(alias, "demo.txt"), path.join(repo, "demo.txt"));
+    assert.match((await service.diff(alias, { path: "demo.txt", side: "working" })).diff, /inside the repository/);
+    await assert.rejects(service.safeFile(alias, "outside-link/demo.txt"), /outside the repository/);
+    await assert.rejects(service.safeFile(alias, "../demo.txt"), /repository-relative/);
 });
 
 test("branch creation/switching, stash apply/pop and linked worktree", async (t) => {

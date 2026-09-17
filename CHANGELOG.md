@@ -4,6 +4,17 @@
 
 Initial public source preview. This entry does not mark a version tag, GitHub Release, release-pinned marketplace entry, external marketplace listing, or verified App installation.
 
+### Fixed
+
+- Canonicalize repository paths before file-containment checks, including Windows short-name and directory aliases.
+- Normalize temporary test fixture paths so Windows CI catalogs and assertions use the same repository identity.
+
+### Changed
+
+- Prioritize direct GitHub and marketplace installation without a manual clone or Release archive.
+- Remove the automatic Release workflow; keep packaging and release-pinning tools optional for maintainers.
+- Replace the standalone migration chapter with a troubleshooting note for existing manual installations.
+
 ### Added
 
 - Git Workbench canvas with the stable `git-workbench` plugin/canvas/folder identity.

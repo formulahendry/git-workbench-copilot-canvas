@@ -250,9 +250,11 @@ export class GitService {
     }
 
     async safeFile(repo, file) {
-        const absolute = path.resolve(repo, filePath(file));
+        // Compare real paths on both sides, including Windows short-name or junction aliases.
+        const root = await realpath(repo);
+        const absolute = path.resolve(root, filePath(file));
         const parent = await realpath(path.dirname(absolute));
-        const relative = path.relative(repo, parent);
+        const relative = path.relative(root, parent);
         requireValue(relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative), "File resolves outside the repository.");
         return absolute;
     }
